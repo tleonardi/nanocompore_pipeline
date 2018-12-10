@@ -94,10 +94,9 @@ process prepare_annots {
 process map {
   publishDir "$baseDir/out/${sample}/", mode: 'copy'
   input:
-    file transcriptome_fasta
     set val(sample),file(albacore_results) from albacore_outputs_minimap
+    each file(transcriptome_fasta) from transcriptome_fasta
   output:
-    file "minimap.sam"
     file "minimap.filt.sort.bam"
     file "minimap.filt.sort.bam.bai"
     file "map"
@@ -110,3 +109,5 @@ process map {
 	${params.samtools} index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
 }
+
+
