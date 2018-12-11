@@ -103,7 +103,7 @@ process prepare_annots {
 }
 
 // Map the basecalled data to the reference with Minimap2
-process map {
+process minimap {
   publishDir "$baseDir/out/${sample}/", mode: 'copy'
   input:
     set val(sample),file(albacore_results) from albacore_outputs_minimap
@@ -113,7 +113,7 @@ process map {
 
 
 """
-	minimap2 -ax map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
+	minimap2 -ax -t ${task.cpus} map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
 	samtools view minimap.sam -bh -F 2324 | samtools sort -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
