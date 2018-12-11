@@ -113,7 +113,7 @@ process minimap {
 
 
 """
-	minimap2 -ax -t ${task.cpus} map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
+	minimap2 -t ${task.cpus} -ax map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
 	samtools view minimap.sam -bh -F 2324 | samtools sort -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
