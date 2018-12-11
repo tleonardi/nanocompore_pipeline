@@ -1,12 +1,5 @@
 #!/usr/bin/env nextflow
  
-params.samples = "$baseDir/samples.txt"
-params.gtf = "/home/nanopore/references/Homo_sapiens.GRCh38.93.gtf"
-params.fasta = "/home/nanopore/references/Homo_sapiens.GRCh38.dna.toplevel.fa"
-params.target_trancripts = false
-
-params.qc=false
-
 if( params.gtf ){
     Channel
         .fromPath(params.gtf, checkIfExists:true)
