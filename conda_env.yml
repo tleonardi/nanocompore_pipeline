@@ -1,0 +1,62 @@
+name: nanocompore
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bedtools=2.27.1=he941832_2
+  - bwa=0.7.17=ha92aebf_3
+  - libdeflate=1.0=h470a237_0
+  - minimap2=2.14=ha92aebf_0
+  - nanopolish=0.10.2=h78a5b34_0
+  - samtools=1.9=h8ee4bcc_1
+  - biopython=1.72=py36h470a237_0
+  - bzip2=1.0.6=h470a237_2
+  - ca-certificates=2018.11.29=ha4d7672_0
+  - certifi=2018.11.29=py36_1000
+  - curl=7.62.0=h74213dd_0
+  - eigen=3.3.6=h2d50403_0
+  - hdf5=1.10.2=hc401514_3
+  - krb5=1.16.2=hbb41f41_0
+  - libcurl=7.62.0=hbdb9355_0
+  - libedit=3.1.20170329=haf1bffa_1
+  - libffi=3.2.1=hfc679d8_5
+  - libgcc=7.2.0=h69d50b8_2
+  - libgcc-ng=7.2.0=hdf63c60_3
+  - libgfortran=3.0.0=1
+  - libgfortran-ng=7.2.0=hdf63c60_3
+  - libssh2=1.8.0=h5b517e9_3
+  - libstdcxx-ng=7.2.0=hdf63c60_3
+  - llvm-meta=7.0.0=0
+  - mkl_fft=1.0.10=py36_0
+  - mkl_random=1.0.2=py36_0
+  - ncurses=6.1=hfc679d8_1
+  - openmp=7.0.0=h2d50403_0
+  - openssl=1.0.2p=h470a237_1
+  - perl=5.26.2=h470a237_0
+  - pip=18.1=py36_1000
+  - python=3.6.7=h5001a0f_1
+  - readline=7.0=haf1bffa_1
+  - setuptools=40.6.2=py36_0
+  - sqlite=3.26.0=hb1c47c0_0
+  - tk=8.6.9=ha92aebf_0
+  - wheel=0.32.3=py36_0
+  - xz=5.2.4=h470a237_1
+  - zlib=1.2.11=h470a237_3
+  - blas=1.0=mkl
+  - intel-openmp=2019.1=144
+  - mkl=2018.0.3=1
+  - numpy=1.15.0=py36h1b885b7_0
+  - numpy-base=1.15.0=py36h3dfced4_0
+  - pip:
+    - bedparse==0.1.2
+    - h5py==2.8.0
+    - nanopolishcomp==0.5.0
+    - ont-albacore==2.3.4
+    - ont-fast5-api==1.0.1
+    - progressbar33==2.4
+    - python-dateutil==2.7.5
+    - six==1.12.0
+    - tqdm==4.28.1
+prefix: /homes/tl344/local/miniconda2/envs/nanocompore
+
