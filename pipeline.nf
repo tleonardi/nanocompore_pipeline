@@ -3,10 +3,13 @@
 params.samples = "$baseDir/samples.txt"
 params.gtf = "/home/nanopore/references/Homo_sapiens.GRCh38.93.gtf"
 params.fasta = "/home/nanopore/references/Homo_sapiens.GRCh38.dna.toplevel.fa"
-params.target_trancripts = "targets"
+params.target_trancripts = false
 
 params.minimap2="/home/nanopore/.local/src/minimap2"
 params.samtools="/home/nanopore/.local/src/samtools-1.9/samtools" 
+params.nanopolish="/home/nanopore/.local/src/nanopolish/nanopolish"
+
+params.qc=false
 
 if( params.gtf ){
     Channel
@@ -26,31 +29,31 @@ else {
     exit 1, "No genome fasta file specified!"
 }
 
-if( params.target_trancripts ){
-    Channel
-        .fromPath(params.target_trancripts, checkIfExists:true)
-        .into { bed_filter }
+
+if( params.target_trancripts){
+	bed_filter = file(params.target_trancripts)
 }
-else {
-    bed_filter = "NA"
+else{
+	bed_filter = file("NO_FILE")
 }
+
 Channel
     .fromPath( params.samples )
     .splitCsv(header: true, sep:'\t')
     .map{ row-> tuple(row.SampleName, row.Condition, file(row.DataPath)) }
-    .into{albacore_annot; another_annot}
+    .into{albacore_annot; nanopolish_annot}
 
 process albacore {
   publishDir "$baseDir/out/${sample}", mode: 'copy'
   input:
     set val(sample),val(condition),file(fast5) from albacore_annot
   output:
-    set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap
+    set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap, albacore_outputs_nanopolish
 
   """
   VIRTUAL_ENV_DISABLE_PROMPT=true
   source /home/nanopore/DATA/nanopore_7SK_complete_analysis/virtualenv/bin/activate
-  read_fast5_basecaller.py -r -i ${fast5} -t 12 -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o fastq,fast5 -q 0 --disable_pings --disable_filtering
+  read_fast5_basecaller.py -r -i ${fast5} -t 12 -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o fastq -q 0 --disable_pings --disable_filtering
 
   """
 }
@@ -61,6 +64,8 @@ process pycoQC {
     set val(sample),file(albacore_results) from albacore_outputs_pycoqc
   output:
     file "pycoqc.html" into pycoqc_outputs
+  when:
+    params.qc==true
 
   """
   echo pycoQC -f "${albacore_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 > pycoqc.html
@@ -76,38 +81,50 @@ process prepare_annots {
   output:
     file "reference_transcriptome.bed" into transcriptome_bed
     file "reference_transcriptome_fastaName.bed" into transcriptome_bed_faname
-    file "reference_transcriptome.fa" into transcriptome_fasta
+    file "reference_transcriptome.fa" into transcriptome_fasta_minimap, transcriptome_fasta_nanopolish
 
-  shell:
-  '''
-  if [[ -f !{bed_filter} ]]; then 
-	  bedparse gtf2bed --extraFields transcript_name !{transcriptome_gtf} | bedparse filter --annotation !{bed_filter} > reference_transcriptome.bed
-  else
-	  bedparse gtf2bed --extraFields transcript_name !{transcriptome_gtf} > reference_transcriptome.bed
-  fi
+  script:
+    def filter = bed_filter.name != 'NO_FILE' ? "| bedparse filter --annotation !{bed_filter}" : ''
+  """
+  bedparse gtf2bed --extraFields transcript_name ${transcriptome_gtf} ${filter} > reference_transcriptome.bed
 
-  awk 'BEGIN{OFS=FS="\t"}{print $1,$2,$3,$4"::"$1":"$2"-"$3"("$6")",$5,$6,$7,$8,$9,$10,$11,$12}' reference_transcriptome.bed > reference_transcriptome_fastaName.bed
-  bedtools getfasta -fi !{genome_fasta} -s -split -name -bed reference_transcriptome.bed > reference_transcriptome.fa
- ''' 
+  awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4"::"\$1":"\$2"-"\$3"("\$6")",\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' reference_transcriptome.bed > reference_transcriptome_fastaName.bed
+  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed > reference_transcriptome.fa
+ """
 }
 
 process map {
   publishDir "$baseDir/out/${sample}/", mode: 'copy'
   input:
     set val(sample),file(albacore_results) from albacore_outputs_minimap
-    each file(transcriptome_fasta) from transcriptome_fasta
+    each file(transcriptome_fasta) from transcriptome_fasta_minimap
   output:
-    file "minimap.filt.sort.bam"
-    file "minimap.filt.sort.bam.bai"
-    file "map"
+    set val(sample), file("minimap.filt.sort.bam"), file("minimap.filt.sort.bam.bai") into minimap
 
 
 """
-	echo "map" > map
 	${params.minimap2} -ax map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
 	${params.samtools} view minimap.sam -bh -F 2324 | ${params.samtools} sort -o minimap.filt.sort.bam
 	${params.samtools} index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
+}
+
+
+
+process nanopolish {
+  publishDir "$baseDir/out/${sample}/", mode: 'copy'
+  input:
+    set val(sample), file(albacore_results), val(label), file(raw_data), file(bam_file), file(bam_index) from albacore_outputs_nanopolish.join(nanopolish_annot).join(minimap)
+    each file(transcriptome_fasta) from transcriptome_fasta_nanopolish
+  output: 
+    file("reads_collapsed.tsv")
+    file("reads_collapsed.tsv.idx")
+
+"""
+	${params.nanopolish} index -s ${albacore_results}/sequencing_summary.txt -d ${raw_data} ${albacore_results}/workspace/*.fastq
+	${params.nanopolish} eventalign -t 2 --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples > reads.tsv
+	NanopolishComp Eventalign_collapse -i reads.tsv -o reads_collapsed.tsv
+"""
 }
 
 
