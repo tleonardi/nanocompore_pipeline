@@ -1,5 +1,6 @@
 #!/usr/bin/env nextflow
- 
+
+
 if( params.gtf ){
     Channel
         .fromPath(params.gtf, checkIfExists:true)
@@ -26,27 +27,45 @@ else{
 	bed_filter = file("NO_FILE")
 }
 
-Channel
-    .fromPath( params.samples )
-    .splitCsv(header: true, sep:'\t')
-    .map{ row-> tuple(row.SampleName, row.Condition, file(row.DataPath)) }
-    .into{albacore_annot; nanopolish_annot}
+// If the input paths are already basecalled define Albacore's output channels
+// otherwise, execute Albacore
+if(params.input_is_basecalled){
+  Channel
+      .fromPath( params.samples )
+      .splitCsv(header: true, sep:'\t')
+      .map{ row-> tuple(row.SampleName, row.Condition, file(row.DataPath)) }
+      .into{nanopolish_annot}
 
-process albacore {
-  publishDir "$baseDir/out/${sample}", mode: 'copy'
-  input:
-    set val(sample),val(condition),file(fast5) from albacore_annot
-  output:
-    set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap, albacore_outputs_nanopolish
+  Channel
+      .fromPath( params.samples )
+      .splitCsv(header: true, sep:'\t')
+      .map{ row-> tuple(row.SampleName, file(row.DataPath)) }
+      .into{albacore_outputs_pycoqc; albacore_outputs_minimap; albacore_outputs_nanopolish}
+}
+else{
+  Channel
+      .fromPath( params.samples )
+      .splitCsv(header: true, sep:'\t')
+      .map{ row-> tuple(row.SampleName, row.Condition, file(row.DataPath)) }
+      .into{albacore_annot; nanopolish_annot}
   
-  script:
-    def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
-  """
-  read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
-
-  """
+  process albacore {
+    publishDir "$baseDir/out/${sample}", mode: 'copy'
+    input:
+      set val(sample),val(condition),file(fast5) from albacore_annot
+    output:
+      set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap, albacore_outputs_nanopolish
+    
+    script:
+      def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
+    """
+    read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
+  
+    """
+  }
 }
 
+// QC Albacore's output
 process pycoQC {
   publishDir "$baseDir/out/${sample}", mode: 'copy'
   input:
@@ -61,6 +80,7 @@ process pycoQC {
   """
 }
 
+// Prepare BED and fasta annotation files
 process prepare_annots {
   publishDir "$baseDir/out/references/", mode: 'copy'
   input:
@@ -82,6 +102,7 @@ process prepare_annots {
  """
 }
 
+// Map the basecalled data to the reference with Minimap2
 process map {
   publishDir "$baseDir/out/${sample}/", mode: 'copy'
   input:
