@@ -38,9 +38,11 @@ process albacore {
     set val(sample),val(condition),file(fast5) from albacore_annot
   output:
     set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap, albacore_outputs_nanopolish
-
+  
+  script:
+    def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
   """
-  read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o fastq -q 0 --disable_pings --disable_filtering
+  read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
 
   """
 }
@@ -91,13 +93,13 @@ process map {
 
 """
 	minimap2 -ax map-ont ${transcriptome_fasta} ${albacore_results}/workspace/*.fastq > minimap.sam
-	samtools view minimap.sam -bh -F 2324 | ${params.samtools} sort -o minimap.filt.sort.bam
+	samtools view minimap.sam -bh -F 2324 | samtools sort -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
 }
 
 
-
+/*
 process nanopolish {
   publishDir "$baseDir/out/${sample}/", mode: 'copy'
   input:
@@ -113,5 +115,4 @@ process nanopolish {
 	NanopolishComp Eventalign_collapse -i reads.tsv -o reads_collapsed.tsv
 """
 }
-
-
+*/
