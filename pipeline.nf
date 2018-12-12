@@ -131,7 +131,7 @@ process nanopolish {
 
 """
 	nanopolish index -s ${albacore_results}/sequencing_summary.txt -d ${raw_data} ${albacore_results}/workspace/*.fastq
-	nanopolish eventalign -t ${task.cpus} --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples | NanopolishComp Eventalign_collapse -t ${task.cpus} -o reads_collapsed.tsv
+	nanopolish eventalign -t ${task.cpus} --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${task.cpus} -o reads_collapsed.tsv
 """
 }
 
