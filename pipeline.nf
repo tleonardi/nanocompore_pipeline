@@ -50,7 +50,7 @@ else{
       .into{albacore_annot; nanopolish_annot}
   
   process albacore {
-    publishDir "$baseDir/out/${sample}", mode: 'copy'
+    publishDir "${resultsDir}/${sample}", mode: 'copy'
     input:
       set val(sample),val(condition),file(fast5) from albacore_annot
     output:
@@ -67,7 +67,7 @@ else{
 
 // QC Albacore's output
 process pycoQC {
-  publishDir "$baseDir/out/${sample}", mode: 'copy'
+  publishDir "${resultsDir}/${sample}", mode: 'copy'
   input:
     set val(sample),file(albacore_results) from albacore_outputs_pycoqc
   output:
@@ -82,7 +82,7 @@ process pycoQC {
 
 // Prepare BED and fasta annotation files
 process prepare_annots {
-  publishDir "$baseDir/out/references/", mode: 'copy'
+  publishDir "${resultsDir}/references/", mode: 'copy'
   input:
     file transcriptome_gtf
     file genome_fasta
@@ -104,7 +104,7 @@ process prepare_annots {
 
 // Map the basecalled data to the reference with Minimap2
 process minimap {
-  publishDir "$baseDir/out/${sample}/", mode: 'copy'
+  publishDir "${resultsDir}/${sample}/", mode: 'copy'
   input:
     set val(sample),file(albacore_results) from albacore_outputs_minimap
     each file(transcriptome_fasta) from transcriptome_fasta_minimap
@@ -121,7 +121,7 @@ process minimap {
 
 
 process nanopolish {
-  publishDir "$baseDir/out/${sample}/", mode: 'copy'
+  publishDir "${resultsDir}/${sample}/", mode: 'copy'
   input:
     set val(sample), file(albacore_results), val(label), file(raw_data), file(bam_file), file(bam_index) from albacore_outputs_nanopolish.join(nanopolish_annot).join(minimap)
     each file(transcriptome_fasta) from transcriptome_fasta_nanopolish
@@ -131,8 +131,7 @@ process nanopolish {
 
 """
 	nanopolish index -s ${albacore_results}/sequencing_summary.txt -d ${raw_data} ${albacore_results}/workspace/*.fastq
-	nanopolish eventalign -t ${task.cpus} --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples > reads.tsv
-	NanopolishComp Eventalign_collapse -t ${task.cpus} -i reads.tsv -o reads_collapsed.tsv
+	nanopolish eventalign -t ${task.cpus} --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples | NanopolishComp Eventalign_collapse -t ${task.cpus} -o reads_collapsed.tsv
 """
 }
 
