@@ -13,7 +13,7 @@ else {
 if( params.fasta ){
     Channel
         .fromPath(params.fasta, checkIfExists:true)
-        .set { genome_fasta }
+        .set{ genome_fasta}
 }
 else {
     exit 1, "No genome fasta file specified!"
@@ -76,7 +76,7 @@ process pycoQC {
     params.qc==true
 
   """
-  echo pycoQC -f "${albacore_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 > pycoqc.html
+  pycoQC -f "${albacore_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 
   """
 }
 
@@ -90,7 +90,7 @@ process prepare_annots {
   output:
     file "reference_transcriptome.bed" into transcriptome_bed
     file "reference_transcriptome_fastaName.bed" into transcriptome_bed_faname
-    file "reference_transcriptome.fa" into transcriptome_fasta_minimap, transcriptome_fasta_nanopolish
+    file "reference_transcriptome.fa" into transcriptome_fasta_minimap, transcriptome_fasta_nanopolish, transcriptome_fasta_nanocompore
     file "reference_transcriptome.fa.fai" into transcriptome_fai_minimap
 
   script:
@@ -130,8 +130,7 @@ process nanopolish {
     set val(sample), file(albacore_results), val(label), file('raw_data'), file(bam_file), file(bam_index) from albacore_outputs_nanopolish.join(nanopolish_annot).join(minimap)
     each file(transcriptome_fasta) from transcriptome_fasta_nanopolish
   output: 
-    file("reads_collapsed.tsv")
-    file("reads_collapsed.tsv.idx")
+    set val(sample), val(label), file("reads_collapsed.tsv"), file("reads_collapsed.tsv.idx") into nanopolishComp
 
 
 script:
@@ -143,3 +142,36 @@ def cpus_each = (task.cpus/2).trunc(0)
 }
 
 
+
+ni_ref=Channel.create()
+ni_other=Channel.create()
+nanopolishComp.groupTuple(by:1).choice( ni_ref, ni_other ) { a -> a[1] == params.reference_condition ? 0 : 1 }
+
+process nanocompore {
+  echo true
+  publishDir "${params.resultsDir}/", mode: 'copy'
+  input:
+    set val(labels1), val(condition1), file('npcomp_ref*.tsv'), file('npcomp_ref*.tsv.idx') from ni_ref
+    set val(labels2), val(condition2), file('npcomp_kd*.tsv'), file('npcomp_kd*.tsv.idx') from ni_other
+    file transcriptome_fasta_nanocompore
+    file transcriptome_bed
+  output:
+    file(nanocompore)
+
+shell:
+'''
+awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4"("\$6")",\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' !{transcriptome_bed} > reference_transcriptome_fastaName.bed
+IFS=','
+f1=(npcomp_ref*.tsv)
+f2=(npcomp_kd*.tsv)
+nanocompore sampcomp --file_list1 "${f1[*]}" --file_list2 "${f2[*]}" \
+ --label1 !{condition1} \
+ --label2 !{condition2} \
+ --fasta !{transcriptome_fasta_nanocompore} \
+ --outpath nanocompore \
+ --sequence_context !{params.sequenceContext} \
+ --pvalue_thr !{params.pvalue_thr} \
+ --min_coverage !{params.min_cov} \
+ --nthreads !{task.cpus}
+'''
+}
