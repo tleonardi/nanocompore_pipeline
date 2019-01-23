@@ -89,17 +89,14 @@ process prepare_annots {
     file bed_filter
   output:
     file "reference_transcriptome.bed" into transcriptome_bed
-    file "reference_transcriptome_fastaName.bed" into transcriptome_bed_faname
     file "reference_transcriptome.fa" into transcriptome_fasta_minimap, transcriptome_fasta_nanopolish, transcriptome_fasta_nanocompore
     file "reference_transcriptome.fa.fai" into transcriptome_fai_minimap
 
   script:
     def filter = bed_filter.name != 'NO_FILE' ? "| bedparse filter --annotation !{bed_filter}" : ''
   """
-  bedparse gtf2bed --extraFields transcript_name ${transcriptome_gtf} ${filter} > reference_transcriptome.bed
-
-  awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4"::"\$1":"\$2"-"\$3"("\$6")",\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' reference_transcriptome.bed > reference_transcriptome_fastaName.bed
-  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed > reference_transcriptome.fa
+  bedparse gtf2bed ${transcriptome_gtf} ${filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
+  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
   samtools faidx reference_transcriptome.fa
  """
 }
@@ -160,7 +157,6 @@ process nanocompore {
 
 shell:
 '''
-awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4"("\$6")",\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' !{transcriptome_bed} > reference_transcriptome_fastaName.bed
 IFS=','
 f1=(npcomp_ref*.tsv)
 f2=(npcomp_kd*.tsv)
@@ -168,6 +164,7 @@ nanocompore sampcomp --file_list1 "${f1[*]}" --file_list2 "${f2[*]}" \
  --label1 !{condition1} \
  --label2 !{condition2} \
  --fasta !{transcriptome_fasta_nanocompore} \
+ --bed !{transcriptome_bed}\
  --outpath nanocompore \
  --sequence_context !{params.sequenceContext} \
  --pvalue_thr !{params.pvalue_thr} \
