@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-
+// Set up input channel from GTF annotation
 if( params.gtf ){
     Channel
         .fromPath(params.gtf, checkIfExists:true)
@@ -10,6 +10,7 @@ else {
     exit 1, "No GTF annotation specified!"
 }
 
+// Set up input channel from Fasta file
 if( params.fasta ){
     Channel
         .fromPath(params.fasta, checkIfExists:true)
@@ -19,7 +20,7 @@ else {
     exit 1, "No genome fasta file specified!"
 }
 
-
+// Setup input channel for target transcript list
 if( params.target_trancripts){
 	bed_filter = file(params.target_trancripts)
 }
@@ -27,8 +28,10 @@ else{
 	bed_filter = file("NO_FILE")
 }
 
-// If the input paths are already basecalled define Albacore's output channels
-// otherwise, execute Albacore
+/* If the input paths are already basecalled
+   define Albacore's output channels otherwise,
+   execute Albacore
+*/
 if(params.input_is_basecalled){
   Channel
       .fromPath( params.samples )
@@ -60,7 +63,6 @@ else{
       def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
     """
     read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
-  
     """
   }
 }
