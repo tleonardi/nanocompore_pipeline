@@ -62,7 +62,7 @@ else{
     script:
       def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
     """
-    read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
+    python \$(which read_fast5_basecaller.py) -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
     """
   }
 }

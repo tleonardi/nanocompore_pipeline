@@ -1,5 +1,5 @@
 SampleName	Condition	DataPath
-KD_1	KD	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/KD_1
-KD_2	KD	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/KD_2
-WT_1	WT	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/WT_1
-WT_2	WT	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/WT_2
+WT_1	WT	/nfs/leia/research/enright/nanopore/datasets/7SK_gurdon_runs/20180718_1701_7SK-MOLM13
+WT_2	WT	/nfs/leia/research/enright/nanopore/datasets/7SK_gurdon_runs/20180822_1629_7SK-MOLM13-REP3
+KD_1	KD	/nfs/leia/research/enright/nanopore/datasets/7SK_gurdon_runs/20180724_1559_7SK_N1-MOLM13_sh68
+KD_2	KD	/nfs/leia/research/enright/nanopore/datasets/7SK_gurdon_runs/20181106_1511_MOLM13-METTL3DK-sh70
