@@ -1,5 +1,3 @@
 SampleName	Condition	DataPath
-KD_1	KD	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/KD_1
-KD_2	KD	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/KD_2
-WT_1	WT	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/WT_1
-WT_2	WT	/nfs/leia/research/enright/nanopore/analyses/RNA_METTL3_KD/RUN_1/Albacore/WT_2
+KD_1	KD	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/KD_7SK_reads
+WT_1	WT	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/WT_7SK_reads
