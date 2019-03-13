@@ -62,7 +62,7 @@ else{
     script:
       def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
     """
-    read_fast5_basecaller.py -r -i ${fast5} -t ${task.cpus} -s albacore -f "FLO-MIN106" -k "SQK-RNA001" -o ${outformat} -q 0 --disable_pings --disable_filtering
+    guppy_basecaller -i ${fast5} -s albacore  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell "FLO-MIN106" --kit "SQK-RNA001"
     """
   }
 }
@@ -91,6 +91,7 @@ process prepare_annots {
     file bed_filter
   output:
     file "reference_transcriptome.bed" into transcriptome_bed
+    file "${genome_fasta}.fai" into genome_fai
     file "reference_transcriptome.fa" into transcriptome_fasta_minimap, transcriptome_fasta_nanopolish, transcriptome_fasta_nanocompore
     file "reference_transcriptome.fa.fai" into transcriptome_fai_minimap
 
@@ -98,7 +99,7 @@ process prepare_annots {
     def filter = bed_filter.name != 'NO_FILE' ? "| bedparse filter --annotation !{bed_filter}" : ''
   """
   bedparse gtf2bed ${transcriptome_gtf} ${filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
-  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
+  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed -fo - | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
   samtools faidx reference_transcriptome.fa
  """
 }
@@ -113,10 +114,11 @@ process minimap {
   output:
     set val(sample), file("minimap.filt.sort.bam"), file("minimap.filt.sort.bam.bai") into minimap
 
-
+script:
+def mem = task.mem ? " -m ${(task.mem.toBytes()/1000000).trunc(0) - 1000}M" : ''
 """
-	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${albacore_results}/workspace/*.fastq > minimap.sam
-	samtools view minimap.sam -bh -t transcriptome.fa.fai -F 2324 | samtools sort -@ ${task.cpus} -m 15G -o minimap.filt.sort.bam
+	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${albacore_results}/*.fastq > minimap.sam
+	samtools view minimap.sam -bh -t transcriptome.fa.fai -F 2324 | samtools sort -@ ${task.cpus} ${mem} -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
 }
@@ -135,8 +137,9 @@ process nanopolish {
 script:
 def cpus_each = (task.cpus/2).trunc(0)
 """
-	nanopolish index -s ${albacore_results}/sequencing_summary.txt -d 'raw_data' ${albacore_results}/workspace/*.fastq
-	nanopolish eventalign -t ${cpus_each} --reads ${albacore_results}/workspace/*.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${cpus_each} -o reads_collapsed.tsv
+	cat ${albacore_results}/*.fastq > basecalled.fastq
+	nanopolish index -s ${albacore_results}/sequencing_summary.txt -d 'raw_data' basecalled.fastq
+	nanopolish eventalign -t ${cpus_each} --reads basecalled.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${cpus_each} -o reads_collapsed.tsv
 """
 }
 
