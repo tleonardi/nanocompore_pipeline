@@ -1,0 +1,21 @@
+Bootstrap: docker
+From: ubuntu:16.04
+
+%runscript
+
+    exec echo "Nothing to do!"
+%environment
+
+%labels
+
+   AUTHOR tom@itm6.xyz
+
+%post
+    apt-get update && apt-get -y install wget lsb-release apt-transport-https
+
+    # Install Guppy
+    export PLATFORM="xenial"
+    wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | apt-key add - 
+    echo "deb http://mirror.oxfordnanoportal.com/apt ${PLATFORM}-stable non-free" > /etc/apt/sources.list.d/nanoporetech.sources.list 
+    apt-get update 
+    apt-get install -y ont-guppy-cpu
