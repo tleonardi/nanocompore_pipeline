@@ -43,26 +43,26 @@ if(params.input_is_basecalled){
       .fromPath( params.samples )
       .splitCsv(header: true, sep:'\t')
       .map{ row-> tuple(row.SampleName, file(row.DataPath)) }
-      .into{albacore_outputs_pycoqc; albacore_outputs_minimap; albacore_outputs_nanopolish}
+      .into{guppy_outputs_pycoqc; guppy_outputs_minimap; guppy_outputs_nanopolish}
 }
 else{
   Channel
       .fromPath( params.samples )
       .splitCsv(header: true, sep:'\t')
       .map{ row-> tuple(row.SampleName, row.Condition, file(row.DataPath)) }
-      .into{albacore_annot; nanopolish_annot}
+      .into{guppy_annot; nanopolish_annot}
   
-  process albacore {
+  process guppy {
     publishDir "${params.resultsDir}/${sample}", mode: 'copy'
     input:
-      set val(sample),val(condition),file(fast5) from albacore_annot
+      set val(sample),val(condition),file(fast5) from guppy_annot
     output:
-      set val("${sample}"), file("albacore") into albacore_outputs_pycoqc, albacore_outputs_minimap, albacore_outputs_nanopolish
+      set val("${sample}"), file("guppy") into guppy_outputs_pycoqc, guppy_outputs_minimap, guppy_outputs_nanopolish
     
     script:
       def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
     """
-    guppy_basecaller -i ${fast5} -s albacore  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell "FLO-MIN106" --kit "SQK-RNA001"
+    guppy_basecaller -i ${fast5} -s guppy  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell "FLO-MIN106" --kit "SQK-RNA001"
     """
   }
 }
@@ -71,14 +71,14 @@ else{
 process pycoQC {
   publishDir "${params.resultsDir}/${sample}", mode: 'copy'
   input:
-    set val(sample),file(albacore_results) from albacore_outputs_pycoqc
+    set val(sample),file(guppy_results) from guppy_outputs_pycoqc
   output:
     file "pycoqc.html" into pycoqc_outputs
   when:
     params.qc==true
 
   """
-  pycoQC -f "${albacore_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 
+  pycoQC -f "${guppy_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 
   """
 }
 
@@ -108,7 +108,7 @@ process prepare_annots {
 process minimap {
   publishDir "${params.resultsDir}/${sample}/", mode: 'copy'
   input:
-    set val(sample),file(albacore_results) from albacore_outputs_minimap
+    set val(sample),file(guppy_results) from guppy_outputs_minimap
     each file('transcriptome.fa') from transcriptome_fasta_minimap
     each file('transcriptome.fa.fai') from transcriptome_fai_minimap
   output:
@@ -117,7 +117,7 @@ process minimap {
 script:
 def mem = task.mem ? " -m ${(task.mem.toBytes()/1000000).trunc(0) - 1000}M" : ''
 """
-	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${albacore_results}/*.fastq > minimap.sam
+	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${guppy_results}/*.fastq > minimap.sam
 	samtools view minimap.sam -bh -t transcriptome.fa.fai -F 2324 | samtools sort -@ ${task.cpus} ${mem} -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
@@ -127,8 +127,8 @@ def mem = task.mem ? " -m ${(task.mem.toBytes()/1000000).trunc(0) - 1000}M" : ''
 process nanopolish {
   publishDir "${params.resultsDir}/${sample}/", mode: 'copy'
   input:
-    // The raw data file has to have a fixed name to avoid a collision with albacore_results filename
-    set val(sample), file(albacore_results), val(label), file('raw_data'), file(bam_file), file(bam_index) from albacore_outputs_nanopolish.join(nanopolish_annot).join(minimap)
+    // The raw data file has to have a fixed name to avoid a collision with guppy_results filename
+    set val(sample), file(guppy_results), val(label), file('raw_data'), file(bam_file), file(bam_index) from guppy_outputs_nanopolish.join(nanopolish_annot).join(minimap)
     each file(transcriptome_fasta) from transcriptome_fasta_nanopolish
   output: 
     set val(sample), val(label), file("reads_collapsed.tsv"), file("reads_collapsed.tsv.idx") into nanopolishComp
@@ -137,8 +137,8 @@ process nanopolish {
 script:
 def cpus_each = (task.cpus/2).trunc(0)
 """
-	cat ${albacore_results}/*.fastq > basecalled.fastq
-	nanopolish index -s ${albacore_results}/sequencing_summary.txt -d 'raw_data' basecalled.fastq
+	cat ${guppy_results}/*.fastq > basecalled.fastq
+	nanopolish index -s ${guppy_results}/sequencing_summary.txt -d 'raw_data' basecalled.fastq
 	nanopolish eventalign -t ${cpus_each} --reads basecalled.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${cpus_each} -o reads_collapsed.tsv
 """
 }
