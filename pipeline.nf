@@ -174,7 +174,7 @@ nanocompore sampcomp --file_list1 "${f1[*]}" --file_list2 "${f2[*]}" \
  --sequence_context !{params.sequenceContext} \
  --pvalue_thr !{params.pvalue_thr} \
  --min_coverage !{params.min_cov} \
- --force_logit \
+ --logit \
  --nthreads !{task.cpus}
 '''
 }
