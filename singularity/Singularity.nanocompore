@@ -32,7 +32,7 @@ From: guppy.img
 
     # Install nanocompore
     cd /nanocompore 
-    git checkout devel
+    git checkout v1.0.0rc2
     pip3 install .
 
     # Install bedtools
