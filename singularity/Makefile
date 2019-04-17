@@ -14,8 +14,9 @@ guppy: $(LAST_GUPPY_IMAGE)
 $(LAST_GUPPY_IMAGE): Singularity.guppy
 	git diff-index --quiet HEAD -- Singularity.guppy || ( echo "Commit the changes to Singularity.guppy"; exit 1)
 	sudo singularity build $(LAST_GUPPY_IMAGE) Singularity.guppy
-	ln -s $(LAST_GUPPY_IMAGE) guppy.img
+	ln -s $(LAST_GUPPY_IMAGE) guppy_latest.img
 
 $(LAST_NANOCOMPORE_IMAGE): Singularity.nanocompore $(LAST_GUPPY_IMAGE)
 	git diff-index --quiet HEAD -- Singularity.nanocompore || ( echo "Commit the changes to Singularity.nanocompore"; exit 1)
-	sudo singularity build $(LAST_NANOCOMPORE_IMAGE) Singularity.nanocompore
+	sudo singularity build --writable $(LAST_NANOCOMPORE_IMAGE) Singularity.nanocompore
+	ln -s $(LAST_NANOCOMPORE_IMAGE) nanocompore_latest.img
