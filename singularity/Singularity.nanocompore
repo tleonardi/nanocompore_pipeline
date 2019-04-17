@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: Guppy.img
+From: guppy_latest.img
 
 %runscript
 
