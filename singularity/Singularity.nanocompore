@@ -30,6 +30,8 @@ From: guppy.img
     # Install NanopolishComp
     pip3 install nanopolishcomp
 
+    pip3 install pytest
+
     # Install nanocompore
     cd /nanocompore 
     git checkout v1.0.0rc2
