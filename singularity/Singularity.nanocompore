@@ -8,8 +8,9 @@ From: baseimage_latest.img
 
 %environment
 
-    NANOCOMPORE_PIPELINE=true
-    export NANOCOMPORE_PIPELINE
+    export NANOCOMPORE_PIPELINE=true
+    # Required to run Jupyter inside container
+    export XDG_RUNTIME_DIR=""
 
 %labels
 
