@@ -19,47 +19,7 @@ From: baseimage_latest.img
     git clone /home/tleonardi/programming/bioinformatics/nanocompore ${SINGULARITY_ROOTFS}/nanocompore
 
 %post
-    apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https
-
-    # Install bedparse
-    pip3 install bedparse
-
-    # Install pycoQC
-    pip3 install pycoQC
-
-    # Install NanopolishComp
-    pip3 install nanopolishcomp
-
-    pip3 install pytest
-
     # Install nanocompore
     cd /nanocompore 
     git checkout v1.0.0rc2
     pip3 install .
-
-    # Install bedtools
-    apt-get -y install bedtools=2.25.0-1
-
-    # Install BWA
-    apt-get -y install bwa=0.7.12-5
-
-    # Install Minimap2
-    wget -O /minimap2-2.16_x64-linux.tar.bz2 "https://github.com/lh3/minimap2/releases/download/v2.16/minimap2-2.16_x64-linux.tar.bz2"
-    cd / && tar -jxf /minimap2-2.16_x64-linux.tar.bz2
-    cp /minimap2-2.16_x64-linux/minimap2 /usr/local/bin
-
-    # Install nanopolish
-    apt-get -y install zlib1g-dev
-    cd / && git clone --recursive https://github.com/jts/nanopolish.git
-    cd /nanopolish
-    git checkout v0.11.0
-    make && cp /nanopolish/nanopolish /usr/local/bin
-
-    # Samtools
-    apt-get -y install libbz2-dev  liblzma-dev
-    cd / && git clone https://github.com/samtools/samtools.git
-    cd / && git clone https://github.com/samtools/htslib.git
-    cd /samtools
-    git checkout 1.9
-    autoreconf && ./configure --without-curses && make
-    make install
