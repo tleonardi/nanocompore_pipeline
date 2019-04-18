@@ -1,25 +1,24 @@
-Bootstrap: localimage
-From: baseimage_latest.img
+Bootstrap: docker
+From: ubuntu:16.04
 
 %runscript
-
     exec echo "Nothing to do!"
 
-
 %environment
-
-    NANOCOMPORE_PIPELINE=true
-    export NANOCOMPORE_PIPELINE
 
 %labels
 
    AUTHOR tommaso.leonardi@iit.it
 
-%setup
-    git clone /home/tleonardi/programming/bioinformatics/nanocompore ${SINGULARITY_ROOTFS}/nanocompore
-
 %post
     apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https
+
+    # Install Guppy
+    export PLATFORM="xenial"
+    wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | apt-key add -
+    echo "deb http://mirror.oxfordnanoportal.com/apt ${PLATFORM}-stable non-free" > /etc/apt/sources.list.d/nanoporetech.sources.list
+    apt-get update
+    apt-get install -y ont-guppy-cpu
 
     # Install bedparse
     pip3 install bedparse
@@ -32,10 +31,7 @@ From: baseimage_latest.img
 
     pip3 install pytest
 
-    # Install nanocompore
-    cd /nanocompore 
-    git checkout v1.0.0rc2
-    pip3 install .
+    pip3 install ipykernel
 
     # Install bedtools
     apt-get -y install bedtools=2.25.0-1
