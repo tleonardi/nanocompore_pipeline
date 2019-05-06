@@ -22,5 +22,5 @@ From: baseimage_latest.img
 %post
     # Install nanocompore
     cd /nanocompore 
-    git checkout fix_txComp_issue
+    git checkout 28594e8
     pip3 install .
