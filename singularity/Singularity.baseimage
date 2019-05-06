@@ -48,7 +48,7 @@ From: ubuntu:16.04
     apt-get -y install zlib1g-dev
     cd / && git clone --recursive https://github.com/jts/nanopolish.git
     cd /nanopolish
-    git checkout v0.11.0
+    git checkout v0.11.1
     make && cp /nanopolish/nanopolish /usr/local/bin
 
     # Samtools
