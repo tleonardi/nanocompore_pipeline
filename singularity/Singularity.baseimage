@@ -11,7 +11,7 @@ From: ubuntu:16.04
    AUTHOR tommaso.leonardi@iit.it
 
 %post
-    apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https
+    apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https vim
 
     # Install Guppy
     export PLATFORM="xenial"
