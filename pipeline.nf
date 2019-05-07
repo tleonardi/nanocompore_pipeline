@@ -62,7 +62,7 @@ else{
     script:
       def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
     """
-    guppy_basecaller -i ${fast5} -s guppy  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell "FLO-MIN106" --kit "SQK-RNA001"
+    guppy_basecaller -i ${fast5} -s guppy  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell params.flowcell --kit params.kit
     """
   }
 }
