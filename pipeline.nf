@@ -60,9 +60,9 @@ else{
       set val("${sample}"), file("guppy") into guppy_outputs_pycoqc, guppy_outputs_minimap, guppy_outputs_nanopolish
     
     script:
-      def outformat = params.keep_basecalled_fast5  ? "fastq,fast5" : "fastq"
+      def keep_fast5 = params.keep_basecalled_fast5  ? "--fast5_out" : ""
     """
-    guppy_basecaller -i ${fast5} -s guppy  --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell params.flowcell --kit params.kit
+    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell params.flowcell --kit params.kit
     """
   }
 }
