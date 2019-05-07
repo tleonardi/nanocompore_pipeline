@@ -22,5 +22,5 @@ From: baseimage_latest.img
 %post
     # Install nanocompore
     cd /nanocompore 
-    git checkout fe518b4
+    git checkout 5035fac
     pip3 install .
