@@ -70,7 +70,7 @@ else{
     script:
       def keep_fast5 = params.keep_basecalled_fast5  ? "--fast5_out" : ""
     """
-    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell params.flowcell --kit params.kit
+    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
     """
   }
 }
