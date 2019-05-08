@@ -28,6 +28,14 @@ else{
 	bed_filter = file("NO_FILE")
 }
 
+// Setup input channel for inverse filter 
+if( params.exclude_trancripts){
+        bed_invfilter = file(params.exclude_trancripts)
+}
+else{
+        bed_invfilter = file("NO_FILE")
+}
+
 /* If the input paths are already basecalled
    define Albacore's output channels otherwise,
    execute Albacore
@@ -89,6 +97,7 @@ process prepare_annots {
     file transcriptome_gtf
     file genome_fasta
     file bed_filter
+    file bed_invfilter
   output:
     file "reference_transcriptome.bed" into transcriptome_bed
     file "${genome_fasta}.fai" into genome_fai
@@ -97,8 +106,9 @@ process prepare_annots {
 
   script:
     def filter = bed_filter.name != 'NO_FILE' ? "| bedparse filter --annotation !{bed_filter}" : ''
+    def inv_filter = bed_invfilter.name != 'NO_FILE' ? "| bedparse filter --annotation ${bed_invfilter} -v " : ''
   """
-  bedparse gtf2bed ${transcriptome_gtf} ${filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
+  bedparse gtf2bed ${transcriptome_gtf} ${filter} ${inv_filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
   bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed -fo - | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
   samtools faidx reference_transcriptome.fa
  """
