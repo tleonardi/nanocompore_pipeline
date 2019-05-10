@@ -40,10 +40,10 @@ From: ubuntu:19.04
     pip3 install ipykernel
 
     # Install bedtools
-    apt-get -y install bedtools=2.25.0-1
+    apt-get -y install bedtools=2.27.1+dfsg-4
 
     # Install BWA
-    apt-get -y install bwa=0.7.12-5
+    apt-get -y install bwa=0.7.17-2
 
     # Install Minimap2
     wget -O /minimap2-2.16_x64-linux.tar.bz2 "https://github.com/lh3/minimap2/releases/download/v2.16/minimap2-2.16_x64-linux.tar.bz2"
