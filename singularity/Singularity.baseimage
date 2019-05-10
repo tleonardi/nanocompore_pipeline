@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: ubuntu:16.04
+From: ubuntu:19.04
 
 %runscript
     exec echo "Nothing to do!"
@@ -10,15 +10,21 @@ From: ubuntu:16.04
 
    AUTHOR tommaso.leonardi@iit.it
 
+%files
+   ont-guppy-cpu_3.0.3_linux64.tar.gz
+
 %post
     apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https vim
 
     # Install Guppy
-    export PLATFORM="xenial"
-    wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | apt-key add -
-    echo "deb http://mirror.oxfordnanoportal.com/apt ${PLATFORM}-stable non-free" > /etc/apt/sources.list.d/nanoporetech.sources.list
-    apt-get update
-    apt-get install -y ont-guppy-cpu
+    # export PLATFORM="xenial"
+    # wget -O- https://mirror.oxfordnanoportal.com/apt/ont-repo.pub | apt-key add -
+    # echo "deb http://mirror.oxfordnanoportal.com/apt ${PLATFORM}-stable non-free" > /etc/apt/sources.list.d/nanoporetech.sources.list
+    # apt-get update
+    # apt-get install -y ont-guppy-cpu
+    apt-get install libidn11
+    tar -zxf /ont-guppy-cpu_3.0.3_linux64.tar.gz
+    echo "PATH=\"/ont-guppy-cpu/bin/:${PATH}\"" >>$SINGULARITY_ENVIRONMENT
 
     # Install bedparse
     pip3 install bedparse
@@ -34,10 +40,10 @@ From: ubuntu:16.04
     pip3 install ipykernel
 
     # Install bedtools
-    apt-get -y install bedtools=2.25.0-1
+    apt-get -y install bedtools=2.27.1+dfsg-4
 
     # Install BWA
-    apt-get -y install bwa=0.7.12-5
+    apt-get -y install bwa=0.7.17-2
 
     # Install Minimap2
     wget -O /minimap2-2.16_x64-linux.tar.bz2 "https://github.com/lh3/minimap2/releases/download/v2.16/minimap2-2.16_x64-linux.tar.bz2"

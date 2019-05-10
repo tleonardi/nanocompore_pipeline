@@ -141,7 +141,7 @@ process nanopolish {
     set val(sample), file(guppy_results), val(label), file('raw_data'), file(bam_file), file(bam_index) from guppy_outputs_nanopolish.join(nanopolish_annot).join(minimap)
     each file(transcriptome_fasta) from transcriptome_fasta_nanopolish
   output: 
-    set val(sample), val(label), file("reads_collapsed.tsv"), file("reads_collapsed.tsv.idx") into nanopolishComp
+    set val(sample), val(label), file("nanopolishcomp/out_eventalign_collapse.tsv"), file("nanopolishcomp/out_eventalign_collapse.tsv.idx") into nanopolishComp
 
 
 script:
@@ -149,7 +149,8 @@ def cpus_each = (task.cpus/2).trunc(0)
 """
 	cat ${guppy_results}/*.fastq > basecalled.fastq
 	nanopolish index -s ${guppy_results}/sequencing_summary.txt -d 'raw_data' basecalled.fastq
-	nanopolish eventalign -t ${cpus_each} --reads basecalled.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${cpus_each} -o reads_collapsed.tsv
+	mkdir -p nanopolishcomp/
+        nanopolish eventalign -t ${cpus_each} --reads basecalled.fastq --bam ${bam_file} --genome ${transcriptome_fasta} --samples --print-read-names --scale-events | NanopolishComp Eventalign_collapse -t ${cpus_each} -o nanopolishcomp/
 """
 }
 
