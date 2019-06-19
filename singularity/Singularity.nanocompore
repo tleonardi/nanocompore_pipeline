@@ -16,10 +16,8 @@ From: baseimage_latest.img
    AUTHOR tommaso.leonardi@iit.it
 
 %setup
-    git clone /home/tleonardi/programming/bioinformatics/nanocompore ${SINGULARITY_ROOTFS}/nanocompore
+    cp /home/tleonardi/programming/bioinformatics/nanocompore/dist/nanocompore-1.0.0rc3.dev0-py3-none-any.whl ${SINGULARITY_ROOTFS}/
 
 %post
     # Install nanocompore
-    cd /nanocompore 
-    git checkout devel 
-    pip3 install .
+    pip3 install /nanocompore-1.0.0rc3.dev0-py3-none-any.whl
