@@ -33,7 +33,7 @@ if( params.exclude_trancripts){
         bed_invfilter = file(params.exclude_trancripts)
 }
 else{
-        bed_invfilter = file("NO_FILE")
+        bed_invfilter = file("NO_FILE2")
 }
 
 /* If the input paths are already basecalled
@@ -106,7 +106,7 @@ process prepare_annots {
 
   script:
     def filter = bed_filter.name != 'NO_FILE' ? "| bedparse filter --annotation !{bed_filter}" : ''
-    def inv_filter = bed_invfilter.name != 'NO_FILE' ? "| bedparse filter --annotation ${bed_invfilter} -v " : ''
+    def inv_filter = bed_invfilter.name != 'NO_FILE2' ? "| bedparse filter --annotation ${bed_invfilter} -v " : ''
   """
   bedparse gtf2bed ${transcriptome_gtf} ${filter} ${inv_filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
   bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed -fo - | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
