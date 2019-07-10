@@ -172,6 +172,7 @@ process nanocompore {
     file(nanocompore)
 
 shell:
+def: downsample = params.downsample_high_cov ? " --downsample_high_coverage !{params.downsample_high_cov}" : ""
 '''
 IFS=','
 f1=(npcomp_ref*.tsv)
@@ -183,6 +184,8 @@ nanocompore sampcomp --file_list1 "${f1[*]}" --file_list2 "${f2[*]}" \
  --bed !{transcriptome_bed}\
  --outpath nanocompore \
  --sequence_context !{params.sequenceContext} \
+ "${downsample}" \
+ --allow_warnings \
  --pvalue_thr !{params.pvalue_thr} \
  --min_coverage !{params.min_cov} \
  --logit \
