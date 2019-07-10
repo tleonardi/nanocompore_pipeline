@@ -10,6 +10,9 @@ From: baseimage_latest.img
     export NANOCOMPORE_PIPELINE=true
     # Required to run Jupyter inside container
     export XDG_RUNTIME_DIR=""
+    # Required to avoid loading packages from user's home directory
+    PYTHONNOUSERSITE="some-arbitrary-value"
+    export PYTHONNOUSERSITE
 
 %labels
 
