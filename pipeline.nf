@@ -172,7 +172,7 @@ process nanocompore {
     file(nanocompore)
 
 shell:
-def: downsample = params.downsample_high_cov ? " --downsample_high_coverage !{params.downsample_high_cov}" : ""
+def downsample = params.downsample_high_cov ? " --downsample_high_coverage !{params.downsample_high_cov}" : ""
 '''
 IFS=','
 f1=(npcomp_ref*.tsv)
