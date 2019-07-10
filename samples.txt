@@ -1,3 +1,5 @@
 SampleName	Condition	DataPath
-KD_1	KD	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/KD_7SK_reads
-WT_1	WT	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/WT_7SK_reads
+WT_1	WT	/hps/nobackup/enright/tom/new_nanocompore/7SK_DKC1/demultiplexed/BC1
+WT_2	WT	/hps/nobackup/enright/tom/new_nanocompore/7SK_DKC1/demultiplexed/BC3
+KD_1	KD	/hps/nobackup/enright/tom/new_nanocompore/7SK_DKC1/demultiplexed/BC2
+KD_2	KD	/hps/nobackup/enright/tom/new_nanocompore/7SK_DKC1/demultiplexed/BC4
