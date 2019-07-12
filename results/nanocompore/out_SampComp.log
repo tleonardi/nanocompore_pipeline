@@ -1,0 +1,33 @@
+{
+  "package_name": "nanocompore",
+  "package_version": "1.0.0rc3-1",
+  "timestamp": "2019-07-12 09:44:42.259183",
+  "eventalign_fn_dict": {
+    "WT": {
+      "WT_1": "npcomp_ref1.tsv",
+      "WT_2": "npcomp_ref2.tsv"
+    },
+    "KD": {
+      "KD_1": "npcomp_kd1.tsv",
+      "KD_2": "npcomp_kd2.tsv"
+    }
+  },
+  "fasta_fn": "reference_transcriptome.fa",
+  "bed_fn": "reference_transcriptome.bed",
+  "outpath": "nanocompore",
+  "outprefix": "out_",
+  "overwrite": false,
+  "comparison_methods": "GMM,KS",
+  "logit": true,
+  "allow_warnings": true,
+  "sequence_context": 2,
+  "sequence_context_weights": "uniform",
+  "min_coverage": 30,
+  "min_ref_length": 100,
+  "downsample_high_coverage": 5000,
+  "max_invalid_kmers_freq": 0.1,
+  "select_ref_id": [],
+  "exclude_ref_id": [],
+  "nthreads": 10,
+  "log_level": "info"
+}
