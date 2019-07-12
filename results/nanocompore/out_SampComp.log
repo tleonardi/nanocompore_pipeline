@@ -1,7 +1,7 @@
 {
   "package_name": "nanocompore",
   "package_version": "1.0.0rc3-1",
-  "timestamp": "2019-07-12 09:44:42.259183",
+  "timestamp": "2019-07-12 10:12:47.517392",
   "eventalign_fn_dict": {
     "WT": {
       "WT_1": "npcomp_ref1.tsv",
@@ -22,7 +22,7 @@
   "allow_warnings": true,
   "sequence_context": 2,
   "sequence_context_weights": "uniform",
-  "min_coverage": 30,
+  "min_coverage": 10,
   "min_ref_length": 100,
   "downsample_high_coverage": 5000,
   "max_invalid_kmers_freq": 0.1,
