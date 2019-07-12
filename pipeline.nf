@@ -171,24 +171,24 @@ process nanocompore {
   output:
     file(nanocompore)
 
+def downsample = params.downsample_high_cov ? " --downsample_high_coverage ${params.downsample_high_cov}" : " "
 shell:
-def downsample = params.downsample_high_cov ? " --downsample_high_coverage !{params.downsample_high_cov}" : ""
-'''
+"""
 IFS=','
 f1=(npcomp_ref*.tsv)
 f2=(npcomp_kd*.tsv)
-nanocompore sampcomp --file_list1 "${f1[*]}" --file_list2 "${f2[*]}" \
- --label1 !{condition1} \
- --label2 !{condition2} \
- --fasta !{transcriptome_fasta_nanocompore} \
- --bed !{transcriptome_bed}\
+nanocompore sampcomp --file_list1 "\${f1[*]}" --file_list2 "\${f2[*]}" \
+ --label1 ${condition1} \
+ --label2 ${condition2} \
+ --fasta ${transcriptome_fasta_nanocompore} \
+ --bed ${transcriptome_bed}\
  --outpath nanocompore \
- --sequence_context !{params.sequenceContext} \
- "${downsample}" \
+ --sequence_context ${params.sequenceContext} \
+ ${downsample} \
  --allow_warnings \
- --pvalue_thr !{params.pvalue_thr} \
- --min_coverage !{params.min_cov} \
+ --pvalue_thr ${params.pvalue_thr} \
+ --min_coverage ${params.min_cov} \
  --logit \
- --nthreads !{task.cpus}
-'''
+ --nthreads ${task.cpus}
+"""
 }
