@@ -189,6 +189,7 @@ nanocompore sampcomp --file_list1 "\${f1[*]}" --file_list2 "\${f2[*]}" \
  --pvalue_thr ${params.pvalue_thr} \
  --min_coverage ${params.min_cov} \
  --logit \
+ --log_level debug \
  --nthreads ${task.cpus}
 """
 }
