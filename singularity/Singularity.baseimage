@@ -15,6 +15,7 @@ From: ubuntu:19.04
 
 %post
     apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https vim
+    apt-get -y install zlib1g-dev
 
     apt-get install libidn11
     tar -zxf /ont-guppy-cpu_3.3.3_linux64.tar.gz
@@ -45,7 +46,6 @@ From: ubuntu:19.04
     cp /minimap2-2.16_x64-linux/minimap2 /usr/local/bin
 
     # Install nanopolish
-    apt-get -y install zlib1g-dev
     cd / && git clone --recursive https://github.com/jts/nanopolish.git
     cd /nanopolish
     git checkout v0.11.1
