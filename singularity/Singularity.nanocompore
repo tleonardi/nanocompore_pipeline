@@ -20,5 +20,4 @@ From: baseimage_latest.img
 
 %post
     # Install nanocompore
-    apt-get install python3-pip
-    pip install git+https://github.com/tleonardi/nanocompore.git@v1.0.0rc3-1
+    python -m pip install nanocompore==v1.0.0rc3-1
