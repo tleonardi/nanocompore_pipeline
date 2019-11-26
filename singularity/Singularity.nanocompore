@@ -20,4 +20,4 @@ From: baseimage_latest.img
 
 %post
     # Install nanocompore
-    python -m pip install nanocompore==v1.0.0rc3-1
+    python3 -m pip install nanocompore==v1.0.0rc3-1
