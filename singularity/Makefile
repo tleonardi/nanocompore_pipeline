@@ -1,7 +1,6 @@
-LAST_BASE_COMMIT=$(shell git log -n 1 --pretty=format:%h -- Singularity.baseimage)
-LAST_NANOCOMPORE_COMMIT=$(shell git log -n 1 --pretty=format:%h -- Singularity.nanocompore)
-LAST_BASE_IMAGE=baseimage_$(LAST_BASE_COMMIT).img
-LAST_NANOCOMPORE_IMAGE=nanocompore_$(LAST_NANOCOMPORE_COMMIT).img
+LAST_COMMIT=$(shell git log -n 1 --pretty=format:%h -- Singularity.baseimage Singularity.nanocompore)
+LAST_BASE_IMAGE=baseimage_$(LAST_COMMIT).img
+LAST_NANOCOMPORE_IMAGE=nanocompore_$(LAST_COMMIT).img
 
 all: nanocompore
 
