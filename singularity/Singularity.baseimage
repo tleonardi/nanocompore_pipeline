@@ -5,7 +5,7 @@ From: ubuntu:19.04
     exec echo "Nothing to do!"
 
 %environment
-    export DEBIAN_FRONTEND=noninteractive
+    
 %labels
 
    AUTHOR tommaso.leonardi@iit.it
@@ -14,8 +14,8 @@ From: ubuntu:19.04
     ont-guppy-cpu_3.4.4_linux64.tar.gz
 
 %post
-    apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https vim
-    apt-get -y install zlib1g-dev libbz2-dev liblzma-dev libcurl4-openssl-dev
+    export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get -y install autoconf python3 python3-pip python3-tk git wget lsb-release apt-transport-https vim
+    export DEBIAN_FRONTEND=noninteractive && apt-get -y install zlib1g-dev libbz2-dev liblzma-dev libcurl4-openssl-dev
 
     apt-get -y install libidn11
     tar -zxf /ont-guppy-cpu_3.4.4_linux64.tar.gz
