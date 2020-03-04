@@ -1,3 +1,2 @@
 SampleName	Condition	DataPath
-KD_1	KD	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/KD_7SK_reads
-WT_1	WT	/home/tleonardi/Bigcloud/Documents/Projects/bioinformatics/nancompore_pipeline/test_data/WT_7SK_reads
+20190924_THP1_DMSO_2788	20190924_THP1_DMSO_2788	s3://storm-nanopore/20190924_THP1_DMSO_2788
