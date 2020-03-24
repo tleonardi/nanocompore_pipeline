@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: ubuntu:focal
+From: ubuntu:19.04
 
 %runscript
     exec echo "Nothing to do!"
