@@ -22,7 +22,7 @@ From: ubuntu:19.04
     echo "PATH=\"/ont-guppy-cpu/bin/:${PATH}\"" >>$SINGULARITY_ENVIRONMENT
 
     # Install bedparse
-    pip3 install bedparse==0.2.2
+    pip3 install bedparse==0.2.3
 
     # Install pycoQC
     pip3 install pycoQC==2.5.0.19
