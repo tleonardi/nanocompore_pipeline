@@ -1,2 +1,6 @@
 .nextflow*
+nextflow
 work/
+test_data/*
+docker/ont-guppy_*tar.gz
+results/

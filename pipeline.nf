@@ -25,7 +25,7 @@ if( params.target_trancripts){
 	bed_filter = file(params.target_trancripts)
 }
 else{
-	bed_filter = file("NO_FILE")
+	bed_filter = file("$baseDir/assets/NO_FILE")
 }
 
 // Setup input channel for inverse filter 
@@ -33,7 +33,7 @@ if( params.exclude_trancripts){
         bed_invfilter = file(params.exclude_trancripts)
 }
 else{
-        bed_invfilter = file("NO_FILE2")
+        bed_invfilter = file("$baseDir/assets/NO_FILE2")
 }
 
 /* If the input paths are already basecalled
@@ -145,7 +145,7 @@ process nanopolish {
 
 
 script:
-def cpus_each = (task.cpus/2).trunc(0)
+def cpus_each = task.cpus
 """
 	cat ${guppy_results}/*.fastq > basecalled.fastq
 	nanopolish index -s ${guppy_results}/sequencing_summary.txt -d 'raw_data' basecalled.fastq

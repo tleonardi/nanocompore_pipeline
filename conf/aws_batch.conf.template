@@ -1,0 +1,35 @@
+aws {
+  accessKey = ''
+  secretKey = ''
+  region = ''
+  batch {
+    cliPath = '/usr/local/aws-cli/v2/current/bin/aws'
+  }
+}
+
+
+process {
+  executor = 'awsbatch'
+  queue = ''
+  container = ''
+  cpus = 1
+  memory = 16.GB
+
+  withName:guppy{
+    cpus = 2
+  }
+
+  withName:minimap {
+    cpus = 2
+  }
+
+  withName:nanopolish {
+    cpus = 3
+  }
+
+  withName:nanocompore{
+    cpus = 3
+    memory = 64.GB
+  }
+
+}

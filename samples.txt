@@ -1,2 +1,5 @@
 SampleName	Condition	DataPath
-20190924_THP1_DMSO_2788	20190924_THP1_DMSO_2788	s3://storm-nanopore/20190924_THP1_DMSO_2788
+KD1	KD	test_data/KD1_reads
+KD2	KD	test_data/KD2_reads
+WT1	WT	test_data/WT1_reads
+WT2	WT	test_data/WT2_reads
