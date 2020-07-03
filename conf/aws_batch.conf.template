@@ -10,13 +10,17 @@ aws {
 
 process {
   executor = 'awsbatch'
-  queue = ''
+  queue = 'standard_q'
   container = ''
   cpus = 1
   memory = 16.GB
 
   withName:guppy{
     cpus = 2
+    if(params.GPU == "true") {
+      accelerator  = [request: 1, type: 'GPU']
+      queue = 'gpu_q'
+    }
   }
 
   withName:minimap {
