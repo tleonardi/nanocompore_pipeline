@@ -69,8 +69,12 @@ else{
     
     script:
       def keep_fast5 = params.keep_basecalled_fast5  ? "--fast5_out" : ""
+      def gpu_opts = ""
+      if (params.GPU == "true") {
+        gpu_opts = '-x "cuda:all" --gpu_runners_per_device params.guppy_runners_per_device --chunks_per_runner params.guppy_chunks_per_runner --chunk_size params.guppy_chunk_size'
+      }
     """
-    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
+    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} ${gpu_opts} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
     """
   }
 }
@@ -109,7 +113,7 @@ process prepare_annots {
     def inv_filter = bed_invfilter.name != 'NO_FILE2' ? "| bedparse filter --annotation ${bed_invfilter} -v " : ''
   """
   bedparse gtf2bed ${transcriptome_gtf} ${filter} ${inv_filter} | awk 'BEGIN{OFS=FS="\t"}{print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,\$10,\$11,\$12}' > reference_transcriptome.bed
-  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed -fo - | perl -pe 's/>(.+)\\([+-]\\)/>\$1/' > reference_transcriptome.fa
+  bedtools getfasta -fi ${genome_fasta} -s -split -name -bed reference_transcriptome.bed -fo - | perl -pe 's/>(.+)::.+/>\$1/' > reference_transcriptome.fa
   samtools faidx reference_transcriptome.fa
  """
 }
