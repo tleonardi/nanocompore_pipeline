@@ -71,7 +71,7 @@ else{
       def keep_fast5 = params.keep_basecalled_fast5  ? "--fast5_out" : ""
       def gpu_opts = ""
       if (params.GPU == "true") {
-        gpu_opts = '-x "cuda:all" --gpu_runners_per_device params.guppy_runners_per_device --chunks_per_runner params.guppy_chunks_per_runner --chunk_size params.guppy_chunk_size'
+        gpu_opts = "-x 'cuda:0' --gpu_runners_per_device ${params.guppy_runners_per_device} --chunks_per_runner ${params.guppy_chunks_per_runner} --chunk_size ${params.guppy_chunk_size}"
       }
     """
     guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} ${gpu_opts} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
