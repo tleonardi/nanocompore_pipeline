@@ -4,8 +4,8 @@
 ```
 aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <ecr_repository>
 docker build -t nanocompore/nanocompore_pipeline .
-docker tag nanocompore/nanocompore_pipeline:latest <ecr_repository>/nanocompore/nanocompore_pipeline:latest
-docker push <ecr_repository>/nanocompore/nanocompore_pipeline:latest
+docker tag nanocompore/nanocompore_pipeline:latest <ecr_repository>:latest
+docker push <ecr_repository>:latest
 ```
 
 # Convert Docker image to Singularity
