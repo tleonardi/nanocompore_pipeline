@@ -10,7 +10,7 @@ aws {
 
 process {
   executor = 'awsbatch'
-  queue = 'standard_q'
+  queue = 'nanocompore_main_q'
   container = ''
   cpus = 1
   memory = 16.GB
@@ -19,7 +19,7 @@ process {
     cpus = 2
     if(params.GPU == "true") {
       accelerator  = [request: 1, type: 'GPU']
-      queue = 'gpu_q'
+      queue = 'nanocompore_gpu_q'
     }
   }
 
@@ -33,7 +33,6 @@ process {
 
   withName:nanocompore{
     cpus = 3
-    memory = 64.GB
   }
 
 }
