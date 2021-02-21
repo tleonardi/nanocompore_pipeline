@@ -33,7 +33,7 @@ params {
   // (refer to Nanocompore documentation for info)
   sequenceContext=2
   pvalue_thr=0.05
-  min_cov=1
+  min_cov=30
   downsample_high_cov=5000
   // This must match one of the conditions in the samples file
   reference_condition = "WT"
