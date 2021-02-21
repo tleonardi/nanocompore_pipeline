@@ -5,7 +5,7 @@ ENV PYCOQC_VERSION 2.5.0.21
 ENV BEDPARSE_VERSION 0.2.3
 ENV BEDTOOLS_VERSION 2.26.0+dfsg-5
 ENV MINIMAP2_VERSION 2.17
-ENV NANOPOLISH_VERSION 0.12.3
+ENV NANOPOLISH_VERSION master
 ENV HTSLIB_VERSION 1.10.2
 ENV SAMTOOLS_VERSION 1.10
 ENV NANOCOMPORE_VERSION 1.0.0rc3-1
@@ -63,7 +63,7 @@ RUN wget -O /minimap2-${MINIMAP2_VERSION}_x64-linux.tar.bz2 "https://github.com/
 # Install nanopolish
 RUN git clone --recursive https://github.com/jts/nanopolish.git \
 	&& cd /nanopolish \
-	&& git checkout "v${NANOPOLISH_VERSION}" \
+	&& git checkout "${NANOPOLISH_VERSION}" \
 	&& make && cp /nanopolish/nanopolish /usr/local/bin
 
 # HTSlib and Samtools
