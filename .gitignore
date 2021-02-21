@@ -4,3 +4,7 @@ work/
 test_data/*
 docker/ont-guppy_*tar.gz
 results/
+nextflow.config
+docker/*img
+docker/build_and_push.sh
+conf/aws_batch.conf
