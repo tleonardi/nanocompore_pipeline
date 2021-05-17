@@ -11,7 +11,6 @@ aws {
 process {
   executor = 'awsbatch'
   queue = 'nanocompore_main_q'
-  container = ''
   cpus = 1
   memory = 16.GB
 
