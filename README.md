@@ -4,15 +4,15 @@ This repo contains the code for running the [Nanocompore](https://github.com/tle
 ## Pipeline steps
 The pipeline runs the following steps:
 
-* Basecalls the raw fast5 files using Albacore
-* Run [pycoQC](https://github.com/a-slide/pycoQC) on Albacore's output
-* Prepare a fasta file for the reference transcriptome
+* Basecalls the raw fast5 files using Guppy
+* Run [pycoQC](https://github.com/a-slide/pycoQC) on Guppy's output
+* (Optionally) Prepare a fasta file for the reference transcriptome from the genome fasta and transcriptome annotation in GTF
 * Map the basecalled data to the reference using [minimap2](https://github.com/lh3/minimap2)
-* Realign the raw signal-level data to the kmers of the reference with [Nanopolish](https://github.com/jts/nanopolish)
-* Collapse Nanopolish output by kmer using [NanopolishComp](https://github.com/a-slide/NanopolishComp)
-* Run Nanocompore (to be implemented)
+* Realign the raw signal-level data to the kmers of the reference with [f5c](https://github.com/hasindu2008/f5c)
+* Collapse Nanopolish output by kmer using Nanocompore's eventalign_collapse
+* Run Nanocompore
 
-All steps are executed in a Conda environment that includes all dependencies.
+All steps are executed in a Docker/Singularity containers.
 
 ## How to run
 
@@ -42,7 +42,7 @@ To run the pipeline just execute:
 `nextflow run pipeline.nf`
 
 ### Profiles
-The pipeline is shipped with 2 profiles: local (default) and yoda, which respectively run the processing on the local
-machine or on the Yoda HPC cluster at the EBI-EMBL.
-The local profile limits the number of cuncurrent tasks to 10, which is reduced to 2 and 3 for Albacore and Nanopolish respectively.
-The Yoda profile if configured to use the LSF executor with dynamic memory management.
+The pipeline is shipped with 3 profiles: local (default), lsf and aws_batch, which respectively run the processing on the local
+machine, an LSF cluster or an AWS Batch computer environment.
+The local profile limits the number of cuncurrent tasks to 10, which is reduced to 2 and 3 for Guppy and f5c respectively.
+The LSF profile if configured to use dynamic memory management.

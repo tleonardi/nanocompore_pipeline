@@ -1,14 +1,26 @@
 params {
   // Path to the sample description file
-  samples = "$baseDir/samples.txt"
+  samples = "$baseDir/test_data/samples.txt"
+
+  // Provide either:
+  //   1) transcriptome_fasta: a fasta file for the transcriptome
+  // or 
+  //   1) genome_fasta: fasta file for the genome
+  //   2) gtf: annotation of the transcriptome in GTF
+  // If you use genome_fasta and gtf you *must*
+  // set transcriptome_fasta to false.
+  transcriptome_fasta = false
 
   // Path to the Ensembl GTF file for the reference
-  gtf = ""
+  // This is ignored if transcriptome_fasta is provided
+  gtf = "test_data/test.gtf"
 
   // Path to the reference genome fasta file
-  fasta = ""
+  // This is ignored if transcriptome_fasta is provided
+  genome_fasta = "test_data/chr6.fa"
 
-  // Path to a file of transcript ids of interest
+  // Path to a txt file with a list of transcript ids of 
+  // interest. Only transcripts in this list will be analysed
   // set to false to analyse the whole transcriptome
   target_trancripts = false
   
@@ -25,37 +37,54 @@ params {
   // If true skip the basecalling step
   // the data paths in the sample file must point to Guppy output dirs
   input_is_basecalled=false
+
+  // If true save to disk the eventalign output files
+  keep_eventalign_files = true
   
   // Path to a folder where to store results
   resultsDir = "results/"
  
   // Nanocompore specific options 
-  // (refer to Nanocompore documentation for info)
+  // Refer to Nanocompore documentation for info:
+  // https://nanocompore.rna.rocks/
   sequenceContext=2
   pvalue_thr=0.05
-  min_cov=30
+  min_cov=1
   downsample_high_cov=5000
+
   // This must match one of the conditions in the samples file
   reference_condition = "WT"
 
   flowcell = "FLO-MIN106"
-  kit = "SQK-RNA001"
+  kit = "SQK-RNA002"
 
   // Switch on GPU basecalling
   GPU = "false"
   guppy_runners_per_device = 8
   guppy_chunks_per_runner = 1000
   guppy_chunk_size = 1000
-  }
 
+  // Provide the location of the Docker/Singularity images
+  // (can be either local or on docker hub)
+  // Note that you can provide docker images even if you use
+  // Singularity to run the pipeline.
+  // Due to ONT licensing we can't provide a docker image with
+  // Guppy. Please use the Dockerfile in the repository to build
+  // a suitable image.
+  guppy_container = "guppy:4.4.1"
+  pycoqc_container = "docker://tleonardi/pycoqc:2.5.2"
+  genomicstools_container = "docker://tleonardi/genomics_tools:1.0.1"
+  minimap2_container = "docker://tleonardi/minimap2:2.17"
+  eventalign_container = "docker://tleonardi/nanocompore:v1.0.3"
+  nanocompore_container = "docker://tleonardi/nanocompore:v1.0.3"
+
+  // FPGA = "false"
+}
 
 docker.enabled = true
 // singularity.enabled = true
+// singularity.autoMounts = true
 
-process {
-  // Path to container
-  // container="container_name"
-}
 
 profiles {
   standard {
@@ -63,7 +92,7 @@ profiles {
   }
 
   yoda {
-    includeConfig 'conf/yoda.conf'
+    includeConfig 'conf/lsf.conf'
   }
 
   aws {

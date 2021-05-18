@@ -26,7 +26,7 @@ process {
     cpus = 2
   }
 
-  withName:nanopolish {
+  withName:eventalign{
     cpus = 3
   }
 
