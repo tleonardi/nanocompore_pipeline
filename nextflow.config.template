@@ -72,11 +72,11 @@ params {
   // Guppy. Please use the Dockerfile in the repository to build
   // a suitable image.
   guppy_container = "guppy:4.4.1"
-  pycoqc_container = "docker://tleonardi/pycoqc:2.5.2"
-  genomicstools_container = "docker://tleonardi/genomics_tools:1.0.1"
-  minimap2_container = "docker://tleonardi/minimap2:2.17"
-  eventalign_container = "docker://tleonardi/nanocompore:v1.0.3"
-  nanocompore_container = "docker://tleonardi/nanocompore:v1.0.3"
+  pycoqc_container = "tleonardi/pycoqc:2.5.2"
+  genomicstools_container = "tleonardi/genomics_tools:1.0.1"
+  minimap2_container = "tleonardi/minimap2:2.17"
+  eventalign_container = "tleonardi/nanocompore:v1.0.3"
+  nanocompore_container = "tleonardi/nanocompore:v1.0.3"
 
   // FPGA = "false"
 }
