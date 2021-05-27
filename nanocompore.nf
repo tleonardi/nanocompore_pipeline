@@ -82,7 +82,7 @@ else{
         gpu_opts = "-x 'cuda:0' --gpu_runners_per_device ${params.guppy_runners_per_device} --chunks_per_runner ${params.guppy_chunks_per_runner} --chunk_size ${params.guppy_chunk_size}"
       }
     """
-    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} ${gpu_opts} --recursive --num_callers ${task.cpus} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
+    guppy_basecaller -i ${fast5} -s guppy  ${keep_fast5} ${gpu_opts} --recursive --num_callers ${task.cpus} --min_qscore ${params.min_qscore} --disable_pings --reverse_sequence true --u_substitution true --trim_strategy rna --flowcell ${params.flowcell} --kit ${params.kit}
     """
   }
 }
@@ -99,7 +99,7 @@ process pycoQC {
     params.qc==true
 
   """
-  pycoQC -f "${guppy_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual 7 
+  pycoQC -f "${guppy_results}/sequencing_summary.txt" -o pycoqc.html --min_pass_qual ${params.min_qscore}
   """
 }
 
@@ -160,7 +160,7 @@ process minimap {
 script:
 def mem = task.mem ? " -m ${(task.mem.toBytes()/1000000).trunc(0) - 1000}M" : ''
 """
-	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${guppy_results}/*.fastq > minimap.sam
+	minimap2 -x map-ont -t ${task.cpus} -a transcriptome.fa ${guppy_results}/pass/*.fastq > minimap.sam
 	samtools view minimap.sam -bh -t transcriptome.fa.fai -F 2324 | samtools sort -@ ${task.cpus} ${mem} -o minimap.filt.sort.bam
 	samtools index minimap.filt.sort.bam minimap.filt.sort.bam.bai
 """  
@@ -184,7 +184,7 @@ script:
 def cpus_each = task.cpus
 def tee = params.keep_eventalign_files ? ' tee eventalign.txt | ' : ''
 """
-	cat ${guppy_results}/*.fastq > basecalled.fastq
+	cat ${guppy_results}/pass/*.fastq > basecalled.fastq
         f5c index -t ${cpus_each} -d 'raw_data' basecalled.fastq
         f5c eventalign -t ${cpus_each} -r basecalled.fastq -b ${bam_file} -g ${transcriptome_fasta} --samples --print-read-names --scale-events --rna --disable-cuda=yes --min-mapq 0 | ${tee} nanocompore eventalign_collapse -t ${cpus_each} -o eventalign_collapse
 """

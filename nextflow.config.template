@@ -55,8 +55,10 @@ params {
   // This must match one of the conditions in the samples file
   reference_condition = "WT"
 
+  // Parameters for basecalling with Guppy
   flowcell = "FLO-MIN106"
   kit = "SQK-RNA002"
+  min_qscore = 7
 
   // Switch on GPU basecalling
   GPU = "false"
@@ -71,7 +73,7 @@ params {
   // Due to ONT licensing we can't provide a docker image with
   // Guppy. Please use the Dockerfile in the repository to build
   // a suitable image.
-  guppy_container = "guppy:4.4.1"
+  guppy_container = "genomicpariscentre/guppy:4.5.3"
   pycoqc_container = "tleonardi/pycoqc:2.5.2"
   genomicstools_container = "tleonardi/genomics_tools:1.0.1"
   minimap2_container = "tleonardi/minimap2:2.17"
