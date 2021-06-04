@@ -80,7 +80,7 @@ params {
   eventalign_container = "tleonardi/nanocompore:v1.0.3"
   nanocompore_container = "tleonardi/nanocompore:v1.0.3"
 
-  // FPGA = "false"
+  FPGA = "false"
 }
 
 docker.enabled = true
