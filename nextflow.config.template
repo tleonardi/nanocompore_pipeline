@@ -74,11 +74,11 @@ params {
   // Due to ONT licensing we can't provide a docker image with
   // Guppy. Please use the Dockerfile in the repository to build
   // a suitable image.
-  if(GPU){
-  	guppy_container = "genomicpariscentre/guppy:4.5.3"
+  if(GPU == "true"){
+  	guppy_container = "genomicpariscentre/guppy-gpu:4.5.3"
   }
   else{
-  	guppy_container = "genomicpariscentre/guppy-gpu:4.5.3"
+  	guppy_container = "genomicpariscentre/guppy:4.5.3"
   }
   pycoqc_container = "tleonardi/pycoqc:2.5.2"
   genomicstools_container = "tleonardi/genomics_tools:1.0.1"
