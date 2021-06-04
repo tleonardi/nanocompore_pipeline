@@ -51,6 +51,7 @@ params {
   pvalue_thr=0.05
   min_cov=1
   downsample_high_cov=5000
+  nanocompore_loglevel="debug"
 
   // This must match one of the conditions in the samples file
   reference_condition = "WT"
@@ -73,12 +74,17 @@ params {
   // Due to ONT licensing we can't provide a docker image with
   // Guppy. Please use the Dockerfile in the repository to build
   // a suitable image.
-  guppy_container = "genomicpariscentre/guppy:4.5.3"
+  if(GPU){
+  	guppy_container = "genomicpariscentre/guppy:4.5.3"
+  }
+  else{
+  	guppy_container = "genomicpariscentre/guppy-gpu:4.5.3"
+  }
   pycoqc_container = "tleonardi/pycoqc:2.5.2"
   genomicstools_container = "tleonardi/genomics_tools:1.0.1"
   minimap2_container = "tleonardi/minimap2:2.17"
-  eventalign_container = "tleonardi/nanocompore:v1.0.3"
-  nanocompore_container = "tleonardi/nanocompore:v1.0.3"
+  eventalign_container = "tleonardi/nanocompore:v1.0.4"
+  nanocompore_container = "tleonardi/nanocompore:v1.0.4"
 
   FPGA = "false"
 }
