@@ -1,0 +1,13 @@
+aws_access_key_id = ""
+aws_secret_access_key = ""
+aws_account_id = ""
+region = "eu-west-1"
+pipeline_name = "Nanocompore_pipeline_storm"
+resources_tag = "nanocompore_pipeline"
+instance_volume_size = 400
+# The most recent ECS optimised AMIs can be found here: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
+ami_id = "ami-07952635e5a4cdaf1"
+gpu_ami_id = "ami-010c9e43a68f84153"
+fpga_ami_id = "ami-0c850cdf7f5be4cb9"
+key_pair = ""
+bucket = "nanocompore-nf-bucket"
