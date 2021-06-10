@@ -31,3 +31,7 @@ The following is a description of the variables defined in `terraform.tfvars`:
 The most recent ECS optimised AMIs can be found here: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
 
 Keep in mind that AMIs are region specific.
+
+## Nanopolish with FPGA accelleration
+
+[Huxelerate](https://www.huxelerate.it/) has developed an FPGA-accellerated version of Nanopolish which is available via a [dedicated AMI](https://aws.amazon.com/marketplace/pp/prodview-57t4mjkndu3sa).
