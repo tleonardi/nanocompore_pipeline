@@ -205,8 +205,7 @@ else{
   
   
   script:
-  // def cpus_each = (task.cpus/2).trunc(0)
-  def cpus_each = task.cpus
+  def cpus_each = (task.cpus/2).trunc(0)
   def tee = params.keep_eventalign_files ? ' tee eventalign.txt | ' : ''
   """
   	cat ${guppy_results}/pass/*.fastq > basecalled.fastq
