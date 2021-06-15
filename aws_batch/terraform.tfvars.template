@@ -2,7 +2,7 @@ aws_access_key_id = ""
 aws_secret_access_key = ""
 aws_account_id = ""
 region = "eu-west-1"
-pipeline_name = "Nanocompore_pipeline_storm"
+pipeline_name = "Nanocompore_pipeline"
 resources_tag = "nanocompore_pipeline"
 instance_volume_size = 400
 # The most recent ECS optimised AMIs can be found here: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
