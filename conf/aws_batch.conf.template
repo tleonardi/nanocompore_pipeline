@@ -1,7 +1,7 @@
 aws {
   accessKey = ''
   secretKey = ''
-  region = ''
+  region = 'eu-west-1'
   batch {
     cliPath = '/usr/local/aws-cli/v2/current/bin/aws'
   }
@@ -10,7 +10,7 @@ aws {
 
 process {
   executor = 'awsbatch'
-  queue = 'nanocompore_main_q'
+  queue = 'Nanocompore_pipeline_main_q'
   cpus = 1
   memory = 16.GB
 
@@ -18,16 +18,27 @@ process {
     cpus = 2
     if(params.GPU == "true") {
       accelerator  = [request: 1, type: 'GPU']
-      queue = 'nanocompore_gpu_q'
+      queue = 'Nanocompore_pipeline_gpu_q'
     }
   }
 
   withName:minimap {
     cpus = 2
   }
-
-  withName:eventalign{
+  
+  withName:eventalign {
     cpus = 3
+  }
+  
+  withName:nanopolish{
+    cpus = 8
+    if(params.FPGA == "true") {
+      container = "job-definition://nanopolish_hugenomic"
+      queue = 'Nanocompore_pipeline_fpga_q'
+      // The options below are ignored when providing a job-definition
+      // cpus = 8
+      // aws.batch.volumes = ['/opt/xilinx', '/huxelerate', '/usr/share/hugenomic/', '/usr/lib64', '/usr/lib', '/usr/bin']
+    }
   }
 
   withName:nanocompore{
