@@ -80,6 +80,7 @@ resource "aws_iam_policy" "main_q_submission" {
             ],
             "Resource": [
                 "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_main_q",
+                "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_fpga_q",
                 "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_gpu_q",
                 "arn:aws:batch:*:*:job-definition/*"
             ]
