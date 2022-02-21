@@ -2,9 +2,10 @@
 nextflow
 work/
 test_data/*
+test_data.zip
 docker/ont-guppy_*tar.gz
 results/
 nextflow.config
-docker/*img
-docker/build_and_push.sh
 conf/aws_batch.conf
+.terraform*
+terraform.tfvars
