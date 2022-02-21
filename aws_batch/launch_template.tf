@@ -8,6 +8,10 @@ resource "aws_launch_template" "nanocompore_launch_template" {
     }
   }
 
+ placement {
+    availability_zone = "${var.region}${var.az}"
+  }
+
   block_device_mappings {
     device_name = "/dev/xvda"
 

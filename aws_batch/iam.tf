@@ -71,33 +71,30 @@ resource "aws_iam_policy" "main_q_submission" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "0",
-            "Effect": "Allow",
-            "Action": [
-                "batch:DeregisterJobDefinition",
-                "batch:SubmitJob",
-                "batch:RegisterJobDefinition"
-            ],
-            "Resource": [
-                "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_main_q",
-                "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_fpga_q",
-                "arn:aws:batch:${var.region}:513365523772:job-queue/nanocompore_gpu_q",
-                "arn:aws:batch:*:*:job-definition/*"
-            ]
-        },
-        {
-            "Sid": "1",
+            "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
                 "batch:DescribeJobQueues",
-                "batch:TerminateJob",
                 "batch:DescribeJobs",
-                "batch:CancelJob",
+                "batch:DescribeSchedulingPolicies",
                 "batch:DescribeJobDefinitions",
+                "batch:ListSchedulingPolicies",
                 "batch:ListJobs",
                 "batch:DescribeComputeEnvironments"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "batch:*",
+            "Resource": [
+                "arn:aws:batch:*:${var.aws_account_id}:job-definition/*:*",
+                "arn:aws:batch:*:*:compute-environment/${var.pipeline_name}_compute_env",
+                "arn:aws:batch:*:${var.aws_account_id}:job-queue/*",
+                "arn:aws:batch:*:${var.aws_account_id}:job/*",
+                "arn:aws:batch:*:${var.aws_account_id}:scheduling-policy/*"
+            ]
         }
     ]
 }

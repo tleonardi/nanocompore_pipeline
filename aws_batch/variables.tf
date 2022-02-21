@@ -31,6 +31,10 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "az" {
+  description = "AWS availability zone"
+}
+
 variable "ami_id" {
   description = "ID of the AMI to use"
 }
