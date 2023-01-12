@@ -20,10 +20,10 @@ All steps are executed in a Docker/Singularity containers.
 Prepare a tab-separated file that describes the samples:
 ```
 SampleName  Condition DataPath
-WT1       WT      /path/to/fast5dir
-WT2       WT      /path/to/fast5dir
-KD1    KD       /path/to/fast5dir
-KD2    KD       /path/to/fast5dir
+WT1         WT        /path/to/fast5dir
+WT2         WT        /path/to/fast5dir
+KD1         KD        /path/to/fast5dir
+KD2         KD        /path/to/fast5dir
 ```
 
 ### Configure the pipeline
