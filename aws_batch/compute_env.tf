@@ -119,8 +119,8 @@ resource "aws_batch_compute_environment" "nanocompore_compute_fpga_env" {
 
     type = "EC2"
     launch_template {
-        launch_template_id = aws_launch_template.nanocompore_launch_template.id
-        version = aws_launch_template.nanocompore_launch_template.latest_version
+        launch_template_id = aws_launch_template.nanocompore_launch_template_fpga_nanopolish.id
+        version = aws_launch_template.nanocompore_launch_template_fpga_nanopolish.latest_version
     }
   }
 
